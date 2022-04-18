@@ -1,9 +1,9 @@
-pub mod debug;
-pub mod fires;
-pub mod paths;
-pub mod texts;
-pub mod times;
-pub mod winds;
+pub mod rux_debug;
+pub mod rux_fires;
+pub mod rux_paths;
+pub mod rux_texts;
+pub mod rux_times;
+pub mod rux_winds;
 
 mod tests;
 

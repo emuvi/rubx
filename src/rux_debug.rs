@@ -13,7 +13,7 @@ use std::sync::{
     Mutex,
 };
 
-use crate::times;
+use crate::rux_times;
 use crate::RubxError;
 
 static VERBOSE: AtomicBool = AtomicBool::new(false);
@@ -110,7 +110,7 @@ pub fn debug(message: impl AsRef<str>) {
         if is_dbg_time() {
             println!(
                 "{} ({}) {}",
-                Utc::now().format(times::UNIQUE_REAL_FORMAT),
+                Utc::now().format(rux_times::UNIQUE_REAL_FORMAT),
                 std::thread::current().name().unwrap_or(""),
                 message.as_ref()
             );
@@ -128,7 +128,7 @@ pub fn debug(message: impl AsRef<str>) {
             writeln!(
                 file,
                 "{} ({}) {}",
-                Utc::now().format(times::UNIQUE_REAL_FORMAT),
+                Utc::now().format(rux_times::UNIQUE_REAL_FORMAT),
                 std::thread::current().name().unwrap_or(""),
                 message.as_ref()
             )
@@ -246,7 +246,7 @@ pub fn debug_make(
 macro_rules! dbg_func {
     () => {{
         fn f() {}
-        let name = crate::debug::dbg_fnam!(f);
+        let name = crate::rux_debug::dbg_fnam!(f);
         &name[..name.len() - 3].trim_end_matches("::{{closure}}")
     }};
 }
@@ -276,8 +276,8 @@ macro_rules! dbg_fval {
 
 macro_rules! dbg_fmts {
     () => (String::default());
-    ($v:expr) => (format!("{} = {}", stringify!($v), crate::debug::dbg_fval!(&$v)));
-    ($v:expr, $($n:expr),+) => (format!("{} = {} , {}", stringify!($v), crate::debug::dbg_fval!(&$v), crate::debug::dbg_fmts!($($n),+)));
+    ($v:expr) => (format!("{} = {}", stringify!($v), crate::rux_debug::dbg_fval!(&$v)));
+    ($v:expr, $($n:expr),+) => (format!("{} = {} , {}", stringify!($v), crate::rux_debug::dbg_fval!(&$v), crate::rux_debug::dbg_fmts!($($n),+)));
 }
 
 macro_rules! dbg_fmsn {
@@ -285,75 +285,75 @@ macro_rules! dbg_fmsn {
         String::default()
     };
     ($v:expr) => {
-        format!("{}", crate::debug::dbg_fval!(&$v))
+        format!("{}", crate::rux_debug::dbg_fval!(&$v))
     };
 }
 
 macro_rules! dbg_info {
     ($err:expr) => (
-        crate::debug::debug_info(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!(), $err)
+        crate::rux_debug::debug_info(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $err)
     );
     ($err:expr, $($v:expr),+) => (
-        crate::debug::debug_info(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+), $err)
+        crate::rux_debug::debug_info(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+), $err)
     );
 }
 
 macro_rules! dbg_erro {
     ($err:expr) => (
-        crate::debug::debug_erro(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!(), $err)
+        crate::rux_debug::debug_erro(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $err)
     );
     ($err:expr, $($v:expr),+) => (
-        crate::debug::debug_erro(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+), $err)
+        crate::rux_debug::debug_erro(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+), $err)
     );
 }
 
 #[allow(unused_macros)]
 macro_rules! dbg_errs {
     ($err:expr) => (
-        crate::debug::debug_errs(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!(), $err)
+        crate::rux_debug::debug_errs(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $err)
     );
     ($err:expr, $($v:expr),+) => (
-        crate::debug::debug_errs(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+), $err)
+        crate::rux_debug::debug_errs(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+), $err)
     );
 }
 
 macro_rules! dbg_bleb {
     ($err:expr) => (
-        crate::debug::debug_bleb(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!(), $err)
+        crate::rux_debug::debug_bleb(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $err)
     );
     ($err:expr, $($v:expr),+) => (
-        crate::debug::debug_bleb(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+), $err)
+        crate::rux_debug::debug_bleb(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+), $err)
     );
 }
 
 #[allow(unused_macros)]
 macro_rules! dbg_jolt {
     ($kind:expr, $msg:expr) => (
-        crate::debug::debug_jolt($kind, file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!(), $msg)
+        crate::rux_debug::debug_jolt($kind, file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $msg)
     );
     ($kind:expr, $msg:expr, $($v:expr),+) => (
-        crate::debug::debug_jolt($kind, file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+), $msg)
+        crate::rux_debug::debug_jolt($kind, file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+), $msg)
     );
 }
 
 #[allow(unused_macros)]
 macro_rules! dbg_kind {
     ($kind:expr, $msg:expr) => (
-        crate::debug::debug_kind($kind, file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!(), $msg)
+        crate::rux_debug::debug_kind($kind, file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $msg)
     );
     ($kind:expr, $msg:expr, $($v:expr),+) => (
-        crate::debug::debug_kind($kind, file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+), $msg)
+        crate::rux_debug::debug_kind($kind, file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+), $msg)
     );
 }
 
 macro_rules! dbg_call {
     () => (
         #[cfg(debug_assertions)]
-        crate::debug::debug_call(file!(), line!(), crate::debug::dbg_func!(), String::default())
+        crate::rux_debug::debug_call(file!(), line!(), crate::rux_debug::dbg_func!(), String::default())
     );
     ($($v:expr),+) => (
         #[cfg(debug_assertions)]
-        crate::debug::debug_call(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+))
+        crate::rux_debug::debug_call(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+))
     );
 }
 
@@ -361,11 +361,11 @@ macro_rules! dbg_reav {
     ($xp:expr) => {{
         let result = $xp;
         #[cfg(debug_assertions)]
-        crate::debug::debug_reav(
+        crate::rux_debug::debug_reav(
             file!(),
             line!(),
-            crate::debug::dbg_func!(),
-            crate::debug::dbg_fmsn!(result),
+            crate::rux_debug::dbg_func!(),
+            crate::rux_debug::dbg_fmsn!(result),
         );
         return result;
     }};
@@ -374,22 +374,22 @@ macro_rules! dbg_reav {
 macro_rules! dbg_step {
     () => (
         #[cfg(debug_assertions)]
-        crate::debug::debug_step(file!(), line!(), crate::debug::dbg_func!(), String::default())
+        crate::rux_debug::debug_step(file!(), line!(), crate::rux_debug::dbg_func!(), String::default())
     );
     ($($v:expr),+) => (
         #[cfg(debug_assertions)]
-        crate::debug::debug_step(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+))
+        crate::rux_debug::debug_step(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+))
     );
 }
 
 macro_rules! dbg_tell {
     () => (
         #[cfg(debug_assertions)]
-        crate::debug::debug_tell(file!(), line!(), crate::debug::dbg_func!(), String::default())
+        crate::rux_debug::debug_tell(file!(), line!(), crate::rux_debug::dbg_func!(), String::default())
     );
     ($($v:expr),+) => (
         #[cfg(debug_assertions)]
-        crate::debug::debug_tell(file!(), line!(), crate::debug::dbg_func!(), crate::debug::dbg_fmts!($($v),+))
+        crate::rux_debug::debug_tell(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+))
     );
 }
 
@@ -399,16 +399,7 @@ pub(crate) use {dbg_call, dbg_reav, dbg_step, dbg_tell};
 pub(crate) use {dbg_fmsn, dbg_fmts, dbg_fnam, dbg_func, dbg_fval};
 
 #[macro_export]
-macro_rules! dbg_func {
-    () => {{
-        fn f() {}
-        let name = rubx::dbg_fnam!(f);
-        &name[..name.len() - 3].trim_end_matches("::{{closure}}")
-    }};
-}
-
-#[macro_export]
-macro_rules! dbg_fnam {
+macro_rules! rux_dbg_fnam {
     ($val:expr) => {{
         fn type_name_of<T>(_: T) -> &'static str {
             std::any::type_name::<T>()
@@ -418,7 +409,16 @@ macro_rules! dbg_fnam {
 }
 
 #[macro_export]
-macro_rules! dbg_fval {
+macro_rules! rux_dbg_func {
+    () => {{
+        fn f() {}
+        let name = rubx::rux_dbg_fnam!(f);
+        &name[..name.len() - 3].trim_end_matches("::{{closure}}")
+    }};
+}
+
+#[macro_export]
+macro_rules! rux_dbg_fval {
     ($v:expr) => {{
         let mut value = format!("{:?}", $v);
         if value.len() > 300 {
@@ -434,130 +434,130 @@ macro_rules! dbg_fval {
 }
 
 #[macro_export]
-macro_rules! dbg_fmts {
+macro_rules! rux_dbg_fmts {
     () => (String::default());
-    ($v:expr) => (format!("{} = {}", stringify!($v), rubx::dbg_fval!(&$v)));
-    ($v:expr, $($n:expr),+) => (format!("{} = {} , {}", stringify!($v), rubx::dbg_fval!(&$v), rubx::dbg_fmts!($($n),+)));
+    ($v:expr) => (format!("{} = {}", stringify!($v), rubx::rux_dbg_fval!(&$v)));
+    ($v:expr, $($n:expr),+) => (format!("{} = {} , {}", stringify!($v), rubx::rux_dbg_fval!(&$v), rubx::rux_dbg_fmts!($($n),+)));
 }
 
 #[macro_export]
-macro_rules! dbg_fmsn {
+macro_rules! rux_dbg_fmsn {
     () => {
         String::default()
     };
     ($v:expr) => {
-        format!("{}", rubx::dbg_fval!(&$v))
+        format!("{}", rubx::rux_dbg_fval!(&$v))
     };
 }
 
 #[macro_export]
-macro_rules! dbg_info {
+macro_rules! rux_dbg_info {
     ($msg:expr) => (
-        rubx::debug::debug_info(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!(), $msg)
+        rubx::rux_debug::debug_info(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!(), $msg)
     );
     ($msg:expr, $($v:expr),+) => (
-        rubx::debug::debug_info(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!($($v),+), $msg)
+        rubx::rux_debug::debug_info(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $msg)
     );
 }
 
 #[macro_export]
-macro_rules! dbg_bleb {
+macro_rules! rux_dbg_bleb {
     ($err:expr) => (
-        rubx::debug::debug_bleb(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!(), $err)
+        rubx::rux_debug::debug_bleb(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!(), $err)
     );
     ($err:expr, $($v:expr),+) => (
-        rubx::debug::debug_bleb(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!($($v),+), $err)
+        rubx::rux_debug::debug_bleb(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $err)
     );
 }
 
 #[macro_export]
-macro_rules! dbg_erro {
+macro_rules! rux_dbg_erro {
     ($msg:expr) => (
-        rubx::debug::debug_erro(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!(), $msg)
+        rubx::rux_debug::debug_erro(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!(), $msg)
     );
     ($msg:expr, $($v:expr),+) => (
-        rubx::debug::debug_erro(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!($($v),+), $msg)
+        rubx::rux_debug::debug_erro(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $msg)
     );
 }
 
 #[macro_export]
-macro_rules! dbg_errs {
+macro_rules! rux_dbg_errs {
     ($msg:expr) => (
-        rubx::debug::debug_errs(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!(), $msg)
+        rubx::rux_debug::debug_errs(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!(), $msg)
     );
     ($msg:expr, $($v:expr),+) => (
-        rubx::debug::debug_errs(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!($($v),+), $msg)
+        rubx::rux_debug::debug_errs(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $msg)
     );
 }
 
 #[macro_export]
-macro_rules! dbg_jolt {
+macro_rules! rux_dbg_jolt {
     ($kind:expr, $msg:expr) => (
-        rubx::debug::debug_jolt($kind, file!(), line!(), rubx::debug::dbg_func!(), rubx::debug::dbg_fmts!(), $msg)
+        rubx::rux_debug::debug_jolt($kind, file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!(), $msg)
     );
     ($kind:expr, $msg:expr, $($v:expr),+) => (
-        rubx::debug::debug_jolt($kind, file!(), line!(), rubx::debug::dbg_func!(), rubx::debug::dbg_fmts!($($v),+), $msg)
+        rubx::rux_debug::debug_jolt($kind, file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $msg)
     );
 }
 
 #[macro_export]
-macro_rules! dbg_kind {
+macro_rules! rux_dbg_kind {
     ($kind:expr, $msg:expr) => (
-        rubx::debug::debug_kind($kind, file!(), line!(), rubx::debug::dbg_func!(), rubx::debug::dbg_fmts!(), $msg)
+        rubx::rux_debug::debug_kind($kind, file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!(), $msg)
     );
     ($kind:expr, $msg:expr, $($v:expr),+) => (
-        rubx::debug::debug_kind($kind, file!(), line!(), rubx::debug::dbg_func!(), rubx::debug::dbg_fmts!($($v),+), $msg)
+        rubx::rux_debug::debug_kind($kind, file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $msg)
     );
 }
 
 #[macro_export]
-macro_rules! dbg_call {
+macro_rules! rux_dbg_call {
     () => (
         #[cfg(debug_assertions)]
-        rubx::debug::debug_call(file!(), line!(), rubx::dbg_func!(), String::default())
+        rubx::rux_debug::debug_call(file!(), line!(), rubx::rux_dbg_func!(), String::default())
     );
     ($($v:expr),+) => (
         #[cfg(debug_assertions)]
-        rubx::debug::debug_call(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!($($v),+))
+        rubx::rux_debug::debug_call(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+))
     );
 }
 
 #[macro_export]
-macro_rules! dbg_reav {
+macro_rules! rux_dbg_reav {
     ($xp:expr) => {{
         let result = $xp;
         #[cfg(debug_assertions)]
-        rubx::debug::debug_reav(
+        rubx::rux_debug::debug_reav(
             file!(),
             line!(),
-            rubx::dbg_func!(),
-            rubx::dbg_fmsn!(result),
+            rubx::rux_dbg_func!(),
+            rubx::rux_dbg_fmsn!(result),
         );
         return result;
     }};
 }
 
 #[macro_export]
-macro_rules! dbg_step {
+macro_rules! rux_dbg_step {
     () => (
         #[cfg(debug_assertions)]
-        rubx::debug::debug_step(file!(), line!(), rubx::dbg_func!(), String::default())
+        rubx::rux_debug::debug_step(file!(), line!(), rubx::rux_dbg_func!(), String::default())
     );
     ($($v:expr),+) => (
         #[cfg(debug_assertions)]
-        rubx::debug::debug_step(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!($($v),+))
+        rubx::rux_debug::debug_step(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+))
     );
 }
 
 #[macro_export]
-macro_rules! dbg_tell {
+macro_rules! rux_dbg_tell {
     () => (
         #[cfg(debug_assertions)]
-        rubx::debug::debug_tell(file!(), line!(), rubx::dbg_func!(), String::default())
+        rubx::rux_debug::debug_tell(file!(), line!(), rubx::rux_dbg_func!(), String::default())
     );
     ($($v:expr),+) => (
         #[cfg(debug_assertions)]
-        rubx::debug::debug_tell(file!(), line!(), rubx::dbg_func!(), rubx::dbg_fmts!($($v),+))
+        rubx::rux_debug::debug_tell(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+))
     );
 }
 

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::debug::{dbg_call, dbg_erro, dbg_reav, dbg_step};
+use crate::rux_debug::{dbg_call, dbg_erro, dbg_reav, dbg_step};
 use crate::RubxError;
 
 pub fn has(path: &str) -> bool {

@@ -3,9 +3,9 @@ use std::process::{Command, Stdio};
 use std::thread;
 use std::time::Duration;
 
-use crate::debug::{dbg_bleb, dbg_erro};
-use crate::debug::{dbg_call, dbg_reav, dbg_step};
-use crate::paths;
+use crate::rux_debug::{dbg_bleb, dbg_erro};
+use crate::rux_debug::{dbg_call, dbg_reav, dbg_step};
+use crate::rux_paths;
 use crate::RubxError;
 
 pub fn cmd(
@@ -113,20 +113,20 @@ pub fn exe_dir() -> Result<String, RubxError> {
     dbg_call!();
     let exe_path = exe_path().map_err(|err| dbg_bleb!(err))?;
     dbg_reav!(Ok(
-        paths::path_parent(&exe_path).map_err(|err| dbg_bleb!(err))?,
+        rux_paths::path_parent(&exe_path).map_err(|err| dbg_bleb!(err))?,
     ));
 }
 
 pub fn exe_name() -> Result<String, RubxError> {
     dbg_call!();
     let exe_path = exe_path().map_err(|err| dbg_bleb!(err))?;
-    dbg_reav!(Ok(paths::path_name(&exe_path).into()));
+    dbg_reav!(Ok(rux_paths::path_name(&exe_path).into()));
 }
 
 pub fn exe_stem() -> Result<String, RubxError> {
     dbg_call!();
     let exe_path = exe_path().map_err(|err| dbg_bleb!(err))?;
-    dbg_reav!(Ok(paths::path_stem(&exe_path).into()));
+    dbg_reav!(Ok(rux_paths::path_stem(&exe_path).into()));
 }
 
 pub fn exe_ext() -> &'static str {

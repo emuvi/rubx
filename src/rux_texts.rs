@@ -3,8 +3,8 @@ use std::io::{prelude::*, BufReader};
 use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
 
-use crate::debug::{dbg_erro};
-use crate::debug::{dbg_call, dbg_reav, dbg_tell};
+use crate::rux_debug::{dbg_erro};
+use crate::rux_debug::{dbg_call, dbg_reav, dbg_tell};
 use crate::RubxError;
 
 pub static LINE_SPACE_CHARS: &[char] = &[' ', '\t'];

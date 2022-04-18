@@ -4,7 +4,7 @@ use reqwest::header::HeaderName;
 
 use std::collections::HashMap;
 
-use crate::debug::{self, dbg_erro, dbg_step};
+use crate::rux_debug::{self, dbg_erro, dbg_step};
 use crate::RubxError;
 
 pub fn get(url: &str, with_headers: Option<HashMap<String, String>>) -> Result<String, RubxError> {
@@ -82,7 +82,7 @@ fn add_headers(to: &mut HeaderMap, from: Option<HashMap<String, String>>) -> Res
 
 fn treat_response(resp: &Response) -> Result<(), RubxError> {
     if !resp.status().is_success() {
-        return Err(debug::wrong(format!(
+        return Err(rux_debug::wrong(format!(
             "Response Error: {}",
             resp.status()
         )));
