@@ -3,7 +3,7 @@ use std::io::{prelude::*, BufReader};
 use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
 
-use crate::rux_debug::{dbg_erro};
+use crate::rux_debug::dbg_erro;
 use crate::rux_debug::{dbg_call, dbg_reav, dbg_tell};
 use crate::RubxError;
 
@@ -14,44 +14,49 @@ pub static QUOTATION_CHARS: &[char] = &['\'', '"'];
 
 pub fn ask(message: &str) -> Result<String, RubxError> {
     dbg_call!(message);
-    print!("{}", message);
+    print!("{} ", message);
     std::io::stdout().flush().map_err(|err| dbg_erro!(err))?;
     let mut buffer = String::new();
     std::io::stdin()
         .read_line(&mut buffer)
         .map_err(|err| dbg_erro!(err))?;
-    Ok(buffer)
+    Ok(buffer.trim().to_string())
 }
 
 pub fn ask_int(message: &str) -> Result<i32, RubxError> {
     dbg_call!(message);
-    print!("{}", message);
+    print!("{} ", message);
     std::io::stdout().flush().map_err(|err| dbg_erro!(err))?;
     let mut buffer = String::new();
     std::io::stdin()
         .read_line(&mut buffer)
         .map_err(|err| dbg_erro!(err))?;
-    let result = buffer.parse::<i32>().map_err(|err| dbg_erro!(err))?;
+    let result = buffer.trim().parse::<i32>().map_err(|err| dbg_erro!(err))?;
     Ok(result)
 }
 
 pub fn ask_float(message: &str) -> Result<f64, RubxError> {
     dbg_call!(message);
-    print!("{}", message);
+    print!("{} ", message);
     std::io::stdout().flush().map_err(|err| dbg_erro!(err))?;
     let mut buffer = String::new();
     std::io::stdin()
         .read_line(&mut buffer)
         .map_err(|err| dbg_erro!(err))?;
-    let result = buffer.parse::<f64>().map_err(|err| dbg_erro!(err))?;
+    let result = buffer.trim().parse::<f64>().map_err(|err| dbg_erro!(err))?;
     Ok(result)
 }
 
 pub fn ask_bool(message: &str) -> Result<bool, RubxError> {
     dbg_call!(message);
-    let result = ask(message).map_err(|err| dbg_erro!(err))?;
-    let result = result.to_lowercase();
-    Ok(result == "t" || result == "true" || result == "y" || result == "yes")
+    print!("{} (y/N) ", message);
+    std::io::stdout().flush().map_err(|err| dbg_erro!(err))?;
+    let mut buffer = String::new();
+    std::io::stdin()
+        .read_line(&mut buffer)
+        .map_err(|err| dbg_erro!(err))?;
+    let result = buffer.trim().to_lowercase();
+    Ok(result == "y" || result == "yes" || result == "t" || result == "true" || result == "1")
 }
 
 pub fn len(text: &str) -> usize {
