@@ -8,10 +8,8 @@ use std::fmt::Result;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
-use std::sync::{
-    atomic::{AtomicBool, AtomicUsize, Ordering},
-    Mutex,
-};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use std::sync::Mutex;
 
 use crate::rux_times;
 use crate::RubxError;
@@ -157,6 +155,10 @@ pub fn debug_info(file: &str, line: u32, func: &str, vals: String, err: impl Dis
     debug_make("INFO", file, line, func, vals, err)
 }
 
+pub fn debug_warn(file: &str, line: u32, func: &str, vals: String, err: impl Display) -> String {
+    debug_make("WARN", file, line, func, vals, err)
+}
+
 pub fn debug_bleb(file: &str, line: u32, func: &str, vals: String, err: RubxError) -> RubxError {
     let from = format!("{}", err);
     let from = if let Some(pos) = from.rfind(" on (") {
@@ -298,6 +300,16 @@ macro_rules! dbg_info {
     );
 }
 
+#[allow(unused_macros)]
+macro_rules! dbg_warn {
+    ($err:expr) => (
+        crate::rux_debug::debug_warn(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $err)
+    );
+    ($err:expr, $($v:expr),+) => (
+        crate::rux_debug::debug_warn(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!($($v),+), $err)
+    );
+}
+
 macro_rules! dbg_erro {
     ($err:expr) => (
         crate::rux_debug::debug_erro(file!(), line!(), crate::rux_debug::dbg_func!(), crate::rux_debug::dbg_fmts!(), $err)
@@ -394,7 +406,7 @@ macro_rules! dbg_tell {
 }
 
 #[allow(unused_imports)]
-pub(crate) use {dbg_bleb, dbg_erro, dbg_errs, dbg_info, dbg_jolt, dbg_kind};
+pub(crate) use {dbg_bleb, dbg_erro, dbg_errs, dbg_info, dbg_jolt, dbg_kind, dbg_warn};
 pub(crate) use {dbg_call, dbg_reav, dbg_step, dbg_tell};
 pub(crate) use {dbg_fmsn, dbg_fmts, dbg_fnam, dbg_func, dbg_fval};
 
@@ -457,6 +469,16 @@ macro_rules! rux_dbg_info {
     );
     ($msg:expr, $($v:expr),+) => (
         rubx::rux_debug::debug_info(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $msg)
+    );
+}
+
+#[macro_export]
+macro_rules! rux_dbg_warn {
+    ($msg:expr) => (
+        rubx::rux_debug::debug_warn(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!(), $msg)
+    );
+    ($msg:expr, $($v:expr),+) => (
+        rubx::rux_debug::debug_warn(file!(), line!(), rubx::rux_dbg_func!(), rubx::rux_dbg_fmts!($($v),+), $msg)
     );
 }
 
