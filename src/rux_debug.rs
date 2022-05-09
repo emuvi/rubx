@@ -282,6 +282,7 @@ macro_rules! dbg_fmts {
     ($v:expr, $($n:expr),+) => (format!("{} = {} , {}", stringify!($v), crate::rux_debug::dbg_fval!(&$v), crate::rux_debug::dbg_fmts!($($n),+)));
 }
 
+#[allow(unused_macros)]
 macro_rules! dbg_fmsn {
     () => {
         String::default()
@@ -407,7 +408,9 @@ macro_rules! dbg_tell {
 
 #[allow(unused_imports)]
 pub(crate) use {dbg_bleb, dbg_erro, dbg_errs, dbg_info, dbg_jolt, dbg_kind, dbg_warn};
+#[allow(unused_imports)]
 pub(crate) use {dbg_call, dbg_reav, dbg_step, dbg_tell};
+#[allow(unused_imports)]
 pub(crate) use {dbg_fmsn, dbg_fmts, dbg_fnam, dbg_func, dbg_fval};
 
 #[macro_export]
