@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rux_debug::{dbg_call, dbg_erro, dbg_reav, dbg_step};
+use crate::rux_debug::{dbg_call, dbg_erro, dbg_reav, dbg_step, dbg_tell};
 use crate::RubxError;
 
 pub fn has(path: &str) -> bool {
@@ -598,4 +598,24 @@ fn path_list_files_exts_in_make(
         }
     }
     Ok(())
+}
+
+pub fn path_env() -> Result<String, RubxError> {
+    dbg_call!();
+    let env_path = std::env::var("PATH").map_err(|err| dbg_erro!(err))?;
+    dbg_reav!(Ok(env_path));
+}
+
+pub fn path_env_dirs() -> Result<Vec<String>, RubxError> {
+    dbg_call!();
+    let mut results = Vec::new();
+    let env_path = std::env::var("PATH").map_err(|err| dbg_erro!(err))?;
+    dbg_step!(env_path);
+    let paths = env_path.split(if crate::rux_fires::is_win() { ';' } else { ':' });
+    for path in paths {
+        let path = path.to_string();
+        dbg_tell!(path);
+        results.push(path);
+    }
+    dbg_reav!(Ok(results));
 }
