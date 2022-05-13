@@ -57,10 +57,16 @@ pub fn rn(origin: &str, destiny: &str) -> Result<(), RubxError> {
 
 pub fn cp(origin: &str, destiny: &str) -> Result<(), RubxError> {
     dbg_call!(origin, destiny);
-    if is_dir(origin) {
-        copy_directory(origin, destiny).map_err(|err| dbg_erro!(err, origin, destiny))?;
+    let destiny = if is_file(origin) && is_dir(destiny) {
+        path_join(destiny, path_name(origin)).map_err(|err| dbg_erro!(err, origin, destiny))?
     } else {
-        copy_file(origin, destiny).map_err(|err| dbg_erro!(err, origin, destiny))?;
+        destiny.to_string()
+    };
+    dbg_step!(destiny);
+    if is_dir(origin) {
+        copy_directory(origin, &destiny).map_err(|err| dbg_erro!(err, origin, destiny))?;
+    } else {
+        copy_file(origin, &destiny).map_err(|err| dbg_erro!(err, origin, destiny))?;
     }
     Ok(())
 }
