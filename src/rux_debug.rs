@@ -421,15 +421,15 @@ macro_rules! dbg_call {
 
 macro_rules! dbg_reav {
   ($xp:expr) => {{
-    let result = $xp;
+    let reav = $xp;
     #[cfg(debug_assertions)]
     crate::rux_debug::debug_reav(
       file!(),
       line!(),
       crate::rux_debug::dbg_func!(),
-      crate::rux_debug::dbg_fmsn!(result),
+      crate::rux_debug::dbg_fmsn!(reav),
     );
-    result
+    reav
   }};
 }
 
@@ -628,15 +628,15 @@ macro_rules! rux_dbg_call {
 #[macro_export]
 macro_rules! rux_dbg_reav {
   ($xp:expr) => {{
-    let result = $xp;
+    let reav = $xp;
     #[cfg(debug_assertions)]
     rubx::rux_debug::debug_reav(
       file!(),
       line!(),
       rubx::rux_dbg_func!(),
-      rubx::rux_dbg_fmsn!(result),
+      rubx::rux_dbg_fmsn!(reav),
     );
-    result
+    reav
   }};
 }
 
