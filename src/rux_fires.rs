@@ -4,7 +4,7 @@ use std::thread;
 use std::time::Duration;
 
 use crate::rux_debug::{dbg_bleb, dbg_erro};
-use crate::rux_debug::{dbg_call, dbg_reav, dbg_step};
+use crate::rux_debug::{dbg_call, dbg_lets, dbg_reav, dbg_step};
 use crate::rux_paths;
 use crate::RubxError;
 
@@ -17,15 +17,14 @@ pub fn cmd(
 ) -> Result<(i32, String), RubxError> {
     dbg_call!(command, print, throw);
     let mut cmd = Command::new(command);
-    let args = args
+    let args = dbg_lets!(args
         .iter()
         .map(|arg| {
             let arg = arg.as_ref();
             cmd.arg(arg);
             arg.into()
         })
-        .collect::<Vec<&str>>();
-    dbg_step!(args);
+        .collect::<Vec<&str>>());
     let dir: String = if let Some(dir) = dir {
         dir.as_ref().into()
     } else {

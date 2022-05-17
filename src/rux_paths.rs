@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rux_debug::{dbg_call, dbg_erro, dbg_reav, dbg_step, dbg_tell};
+use crate::rux_debug::{dbg_call, dbg_erro, dbg_muts, dbg_reav, dbg_step, dbg_tell};
 use crate::RubxError;
 
 pub fn has(path: &str) -> bool {
@@ -174,7 +174,7 @@ pub fn path_parts(path: &str) -> Vec<&str> {
     let mut result: Vec<&str> = path.split(sep).collect();
     if !result.is_empty() {
         if result[0].is_empty() {
-            result[0] = sep;
+            dbg_muts!(result[0], sep);
         }
     }
     result
@@ -190,6 +190,7 @@ pub fn path_parts_join(parts: &[&str]) -> String {
     }
     let mut result = String::new();
     let mut start = 1;
+
     let end = parts.len();
     if parts[0] == "/" {
         result.push('/');
@@ -440,7 +441,7 @@ fn path_list_in_make(path: &str, results: &mut Vec<String>) -> Result<(), RubxEr
 }
 
 pub fn path_list_dirs(path: &str) -> Result<Vec<String>, RubxError> {
-    dbg_step!(path);
+    dbg_call!(path);
     let mut results = Vec::new();
     let entries = std::fs::read_dir(path).map_err(|err| dbg_erro!(err))?;
     for entry in entries {
