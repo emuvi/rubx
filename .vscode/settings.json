@@ -1,7 +1,9 @@
 {
   "cSpell.words": [
     "ARCFILE",
+    "AREALY",
     "chrono",
+    "consts",
     "DBGSIZE",
     "DBGTIME",
     "DBUG",
@@ -10,9 +12,14 @@
     "fmts",
     "fnam",
     "fval",
+    "linebreak",
+    "linespace",
     "mkdir",
     "reav",
     "reavs",
-    "Rubx"
+    "Rubx",
+    "tocapital",
+    "tolower",
+    "toupper"
   ]
 }
