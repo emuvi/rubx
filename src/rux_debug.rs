@@ -249,9 +249,29 @@ pub fn debug_step(file: &str, line: u32, func: &str, vals: String) {
   }
 }
 
-pub fn debug_lets(file: &str, line: u32, func: &str, lets: String) {
+pub fn debug_ifis(file: &str, line: u32, func: &str, what: &str, ifis: String) {
   if get_dbg_size() >= 3 {
-    debug_make("DBUG", file, line, func, lets, "[LETS]");
+    debug_make(
+      "DBUG",
+      file,
+      line,
+      func,
+      format!("if is {} = {}", what, ifis),
+      "[IFIS]",
+    );
+  }
+}
+
+pub fn debug_lets(file: &str, line: u32, func: &str, what: &str, lets: String) {
+  if get_dbg_size() >= 3 {
+    debug_make(
+      "DBUG",
+      file,
+      line,
+      func,
+      format!("lets {} = {}", what, lets),
+      "[LETS]",
+    );
   }
 }
 
@@ -444,6 +464,21 @@ macro_rules! dbg_step {
     );
 }
 
+macro_rules! dbg_ifis {
+  ($xp:expr) => {{
+    let ifis = $xp;
+    #[cfg(debug_assertions)]
+    crate::rux_debug::debug_ifis(
+      file!(),
+      line!(),
+      crate::rux_debug::dbg_func!(),
+      stringify!($xp),
+      crate::rux_debug::dbg_fval!(&ifis),
+    );
+    ifis
+  }};
+}
+
 macro_rules! dbg_lets {
   ($xp:expr) => {{
     let lets = $xp;
@@ -452,7 +487,8 @@ macro_rules! dbg_lets {
       file!(),
       line!(),
       crate::rux_debug::dbg_func!(),
-      crate::rux_debug::dbg_fmts!(lets),
+      stringify!($xp),
+      crate::rux_debug::dbg_fval!(&lets),
     );
     lets
   }};
@@ -467,7 +503,7 @@ macro_rules! dbg_muts {
       line!(),
       crate::rux_debug::dbg_func!(),
       stringify!($to),
-      crate::rux_debug::dbg_fval!(muts),
+      crate::rux_debug::dbg_fval!(&muts),
     );
     $to = muts;
   }};
@@ -487,7 +523,7 @@ macro_rules! dbg_tell {
 #[allow(unused_imports)]
 pub(crate) use {dbg_bleb, dbg_erro, dbg_errs, dbg_info, dbg_jolt, dbg_kind, dbg_warn};
 #[allow(unused_imports)]
-pub(crate) use {dbg_call, dbg_lets, dbg_muts, dbg_reav, dbg_step, dbg_tell};
+pub(crate) use {dbg_call, dbg_ifis, dbg_lets, dbg_muts, dbg_reav, dbg_step, dbg_tell};
 #[allow(unused_imports)]
 pub(crate) use {dbg_fmsn, dbg_fmts, dbg_fnam, dbg_func, dbg_fval};
 
@@ -653,6 +689,22 @@ macro_rules! rux_dbg_step {
 }
 
 #[macro_export]
+macro_rules! rux_dbg_ifis {
+  ($xp:expr) => {{
+    let ifis = $xp;
+    #[cfg(debug_assertions)]
+    rubx::rux_debug::debug_ifis(
+      file!(),
+      line!(),
+      rubx::rux_dbg_func!(),
+      stringify!($xp),
+      rubx::rux_dbg_fval!(&ifis),
+    );
+    ifis
+  }};
+}
+
+#[macro_export]
 macro_rules! rux_dbg_lets {
   ($xp:expr) => {{
     let lets = $xp;
@@ -661,7 +713,8 @@ macro_rules! rux_dbg_lets {
       file!(),
       line!(),
       rubx::rux_dbg_func!(),
-      rubx::rux_dbg_fmts!(lets),
+      stringify!($xp),
+      rubx::rux_dbg_fval!(&lets),
     );
     lets
   }};
@@ -677,7 +730,7 @@ macro_rules! rux_dbg_muts {
       line!(),
       rubx::rux_dbg_func!(),
       stringify!($to),
-      rubx::rux_dbg_fval!(muts),
+      rubx::rux_dbg_fval!(&muts),
     );
     $to = muts;
   }};

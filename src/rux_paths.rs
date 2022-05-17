@@ -1,6 +1,7 @@
 use std::path::Path;
 
-use crate::rux_debug::{dbg_call, dbg_erro, dbg_muts, dbg_reav, dbg_step, dbg_tell};
+use crate::rux_debug::{dbg_call, dbg_ifis, dbg_lets, dbg_muts, dbg_reav};
+use crate::rux_debug::{dbg_erro, dbg_step, dbg_tell};
 use crate::RubxError;
 
 pub fn has(path: &str) -> bool {
@@ -57,13 +58,12 @@ pub fn rn(origin: &str, destiny: &str) -> Result<(), RubxError> {
 
 pub fn cp(origin: &str, destiny: &str) -> Result<(), RubxError> {
   dbg_call!(origin, destiny);
-  let destiny = if is_file(origin) && is_dir(destiny) {
+  let destiny = dbg_lets!(if dbg_ifis!(is_file(origin) && is_dir(destiny)) {
     path_join(destiny, path_name(origin)).map_err(|err| dbg_erro!(err, origin, destiny))?
   } else {
     destiny.to_string()
-  };
-  dbg_step!(destiny);
-  if is_dir(origin) {
+  });
+  if dbg_ifis!(is_dir(origin)) {
     copy_directory(origin, &destiny).map_err(|err| dbg_erro!(err, origin, destiny))?;
   } else {
     copy_file(origin, &destiny).map_err(|err| dbg_erro!(err, origin, destiny))?;

@@ -12,14 +12,18 @@
     "fmts",
     "fnam",
     "fval",
+    "ifis",
+    "isit",
     "linebreak",
     "linespace",
     "mkdir",
     "reav",
     "reavs",
+    "rfind",
     "Rubx",
     "tocapital",
     "tolower",
-    "toupper"
+    "toupper",
+    "vals"
   ]
 }
