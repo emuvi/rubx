@@ -429,7 +429,7 @@ macro_rules! dbg_reav {
       crate::rux_debug::dbg_func!(),
       crate::rux_debug::dbg_fmsn!(result),
     );
-    return result;
+    result
   }};
 }
 
@@ -636,7 +636,7 @@ macro_rules! rux_dbg_reav {
       rubx::rux_dbg_func!(),
       rubx::rux_dbg_fmsn!(result),
     );
-    return result;
+    result
   }};
 }
 
