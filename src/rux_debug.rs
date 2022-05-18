@@ -62,16 +62,16 @@ pub fn put_archive() {
   set_archive(true);
 }
 
-pub fn is_dbg_time() -> bool {
+pub fn is_dbg_times() -> bool {
   DBGTIME.load(Ordering::Acquire)
 }
 
-pub fn set_dbg_time(time: bool) {
+pub fn set_dbg_times(time: bool) {
   DBGTIME.store(time, Ordering::Release);
 }
 
-pub fn put_dbg_time() {
-  set_dbg_time(true);
+pub fn put_dbg_times() {
+  set_dbg_times(true);
 }
 
 pub fn get_dbg_size() -> usize {
@@ -104,43 +104,46 @@ pub fn put_dbg_verbose_tells() {
 }
 
 pub fn debug(message: impl AsRef<str>) {
+  let thread_display = get_thread_display();
   if is_verbose() {
-    if is_dbg_time() {
+    if is_dbg_times() {
       println!(
-        "{} ({}) {}",
+        "{} - |{}| {}",
         Utc::now().format(rux_times::UNIQUE_REAL_FORMAT),
-        std::thread::current().name().unwrap_or(""),
+        &thread_display,
         message.as_ref()
       );
     } else {
-      println!(
-        "({}) {}",
-        std::thread::current().name().unwrap_or(""),
-        message.as_ref()
-      );
+      println!("|{}| {}", &thread_display, message.as_ref());
     }
   }
   if is_archive() {
     let mut file = ARCFILE.lock().unwrap();
-    if is_dbg_time() {
+    if is_dbg_times() {
       writeln!(
         file,
-        "{} ({}) {}",
+        "{} - |{}| {}",
         Utc::now().format(rux_times::UNIQUE_REAL_FORMAT),
-        std::thread::current().name().unwrap_or(""),
+        &thread_display,
         message.as_ref()
       )
       .unwrap();
     } else {
-      writeln!(
-        file,
-        "({}) {}",
-        std::thread::current().name().unwrap_or(""),
-        message.as_ref()
-      )
-      .unwrap();
+      writeln!(file, "|{}| {}", &thread_display, message.as_ref()).unwrap();
     }
   }
+}
+
+fn get_thread_display() -> String {
+  format!(
+    "{}:{}",
+    &get_thread_id()[6..],
+    std::thread::current().name().unwrap_or("")
+  )
+}
+
+fn get_thread_id() -> String {
+  format!("{:?}", &std::thread::current().id())
 }
 
 pub fn wrong(message: String) -> Box<MessageErr> {
@@ -158,7 +161,7 @@ pub fn debug_info(
   vals: String,
   err: impl Display,
 ) -> String {
-  debug_make("INFO", file, line, func, vals, err)
+  debug_of("INFO", file, line, func, vals, err)
 }
 
 pub fn debug_warn(
@@ -168,7 +171,7 @@ pub fn debug_warn(
   vals: String,
   err: impl Display,
 ) -> String {
-  debug_make("WARN", file, line, func, vals, err)
+  debug_of("WARN", file, line, func, vals, err)
 }
 
 pub fn debug_bleb(
@@ -184,8 +187,8 @@ pub fn debug_bleb(
   } else {
     ""
   };
-  let from = format!("[BLEB] from {}", from);
-  debug_make("ERRO", file, line, func, vals, from);
+  let from = format!("<BLEB> from {}", from);
+  debug_of("ERRO", file, line, func, vals, from);
   err
 }
 
@@ -196,7 +199,7 @@ pub fn debug_erro(
   vals: String,
   err: impl Display,
 ) -> RubxError {
-  throw(debug_make("ERRO", file, line, func, vals, err))
+  throw(debug_of("ERRO", file, line, func, vals, err))
 }
 
 pub fn debug_errs(
@@ -206,7 +209,7 @@ pub fn debug_errs(
   vals: String,
   err: impl Display,
 ) -> String {
-  debug_make("ERRO", file, line, func, vals, err)
+  debug_of("ERRO", file, line, func, vals, err)
 }
 
 pub fn debug_jolt(
@@ -217,7 +220,7 @@ pub fn debug_jolt(
   vals: String,
   err: impl Display,
 ) -> RubxError {
-  throw(debug_make(kind, file, line, func, vals, err))
+  throw(debug_of(kind, file, line, func, vals, err))
 }
 
 pub fn debug_kind(
@@ -228,73 +231,73 @@ pub fn debug_kind(
   vals: String,
   err: impl Display,
 ) -> String {
-  debug_make(kind, file, line, func, vals, err)
+  debug_of(kind, file, line, func, vals, err)
 }
 
 pub fn debug_call(file: &str, line: u32, func: &str, vals: String) {
   if get_dbg_size() >= 1 {
-    debug_make("DBUG", file, line, func, vals, "[CALL]");
+    debug_in("DBUG", "CALL", file, line, func, vals);
   }
 }
 
 pub fn debug_reav(file: &str, line: u32, func: &str, vals: String) {
   if get_dbg_size() >= 2 {
-    debug_make("DBUG", file, line, func, vals, "[REAV]");
+    debug_in("DBUG", "REAV", file, line, func, vals);
   }
 }
 
 pub fn debug_step(file: &str, line: u32, func: &str, vals: String) {
   if get_dbg_size() >= 3 {
-    debug_make("DBUG", file, line, func, vals, "[STEP]");
+    debug_in("DBUG", "STEP", file, line, func, vals);
   }
 }
 
 pub fn debug_ifis(file: &str, line: u32, func: &str, what: &str, ifis: String) {
   if get_dbg_size() >= 3 {
-    debug_make(
+    debug_in(
       "DBUG",
+      "IFIS",
       file,
       line,
       func,
       format!("if is {} = {}", what, ifis),
-      "[IFIS]",
     );
   }
 }
 
 pub fn debug_lets(file: &str, line: u32, func: &str, what: &str, lets: String) {
   if get_dbg_size() >= 3 {
-    debug_make(
+    debug_in(
       "DBUG",
+      "LETS",
       file,
       line,
       func,
       format!("lets {} = {}", what, lets),
-      "[LETS]",
     );
   }
 }
 
 pub fn debug_muts(file: &str, line: u32, func: &str, what: &str, muts: String) {
   if get_dbg_size() >= 3 {
-    debug_make(
+    debug_in(
       "DBUG",
+      "MUTS",
       file,
       line,
       func,
       format!("muts {} = {}", what, muts),
-      "[MUTS]",
     );
   }
 }
 
 pub fn debug_tell(file: &str, line: u32, func: &str, vals: String) {
   if get_dbg_size() >= 4 {
-    debug_make("DBUG", file, line, func, vals, "[TELL]");
+    debug_in("DBUG", "TELL", file, line, func, vals);
   }
 }
 
-pub fn debug_make(
+pub fn debug_of(
   kind: &str,
   file: &str,
   line: u32,
@@ -303,13 +306,29 @@ pub fn debug_make(
   msg: impl Display,
 ) -> String {
   let message = if vals.is_empty() {
-    format!("[{}] {} on ({}) in {}[{}]", kind, msg, func, file, line)
+    format!("[{}] on ({}) in [{}:{}] {}", kind, func, file, line, msg)
   } else {
     format!(
-      "[{}] {} on ({}) in {}[{}] as {}",
-      kind, msg, func, file, line, vals
+      "[{}] on ({}) in [{}:{}] {} as {{ {} }}",
+      kind, func, file, line, msg, vals
     )
   };
+  debug(&message);
+  message
+}
+
+pub fn debug_in(
+  kind: &str,
+  sub: &str,
+  file: &str,
+  line: u32,
+  func: &str,
+  vals: String,
+) -> String {
+  let message = format!(
+    "[{}] <{}> on ({}) in [{}:{}] as {{ {} }}",
+    kind, sub, func, file, line, vals
+  );
   debug(&message);
   message
 }
@@ -318,7 +337,7 @@ macro_rules! dbg_func {
   () => {{
     fn f() {}
     let name = crate::rux_debug::dbg_fnam!(f);
-    &name[..name.len() - 3].trim_end_matches("::{{closure}}")
+    &name[..name.len() - 3]
   }};
 }
 
@@ -334,8 +353,8 @@ macro_rules! dbg_fnam {
 macro_rules! dbg_fval {
   ($v:expr) => {{
     let mut value = format!("{:?}", $v);
-    if value.len() > 300 {
-      let mut end = 300;
+    if value.len() > 1000 {
+      let mut end = 1000;
       while !value.is_char_boundary(end) {
         end += 1;
       }
@@ -347,8 +366,8 @@ macro_rules! dbg_fval {
 
 macro_rules! dbg_fmts {
     () => (String::default());
-    ($v:expr) => (format!("{} = {}", stringify!($v), crate::rux_debug::dbg_fval!(&$v)));
-    ($v:expr, $($n:expr),+) => (format!("{} = {} , {}", stringify!($v), crate::rux_debug::dbg_fval!(&$v), crate::rux_debug::dbg_fmts!($($n),+)));
+    ($v:expr) => (format!("{}: {}", stringify!($v), crate::rux_debug::dbg_fval!(&$v)));
+    ($v:expr, $($n:expr),+) => (format!("{}: {}, {}", stringify!($v), crate::rux_debug::dbg_fval!(&$v), crate::rux_debug::dbg_fmts!($($n),+)));
 }
 
 #[allow(unused_macros)]
@@ -449,7 +468,7 @@ macro_rules! dbg_reav {
       crate::rux_debug::dbg_func!(),
       crate::rux_debug::dbg_fmsn!(reav),
     );
-    reav
+    return reav;
   }};
 }
 
@@ -542,7 +561,7 @@ macro_rules! rux_dbg_func {
   () => {{
     fn f() {}
     let name = rubx::rux_dbg_fnam!(f);
-    &name[..name.len() - 3].trim_end_matches("::{{closure}}")
+    &name[..name.len() - 3]
   }};
 }
 
@@ -550,8 +569,8 @@ macro_rules! rux_dbg_func {
 macro_rules! rux_dbg_fval {
   ($v:expr) => {{
     let mut value = format!("{:?}", $v);
-    if value.len() > 300 {
-      let mut end = 300;
+    if value.len() > 1000 {
+      let mut end = 1000;
       while !value.is_char_boundary(end) {
         end += 1;
       }
@@ -565,8 +584,8 @@ macro_rules! rux_dbg_fval {
 #[macro_export]
 macro_rules! rux_dbg_fmts {
     () => (String::default());
-    ($v:expr) => (format!("{} = {}", stringify!($v), rubx::rux_dbg_fval!(&$v)));
-    ($v:expr, $($n:expr),+) => (format!("{} = {} , {}", stringify!($v), rubx::rux_dbg_fval!(&$v), rubx::rux_dbg_fmts!($($n),+)));
+    ($v:expr) => (format!("{}: {}", stringify!($v), rubx::rux_dbg_fval!(&$v)));
+    ($v:expr, $($n:expr),+) => (format!("{}: {}, {}", stringify!($v), rubx::rux_dbg_fval!(&$v), rubx::rux_dbg_fmts!($($n),+)));
 }
 
 #[macro_export]
@@ -672,7 +691,7 @@ macro_rules! rux_dbg_reav {
       rubx::rux_dbg_func!(),
       rubx::rux_dbg_fmsn!(reav),
     );
-    reav
+    return reav;
   }};
 }
 
