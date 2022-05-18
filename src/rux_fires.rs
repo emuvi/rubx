@@ -162,16 +162,16 @@ pub fn is_win() -> bool {
   dbg_reav!(std::env::consts::OS == "windows")
 }
 
-pub fn get_thread_display() -> String {
+pub fn thread_id() -> String {
+  dbg_call!();
+  dbg_reav!(format!("{:?}", thread::current().id()))
+}
+
+pub fn thread_display() -> String {
   dbg_call!();
   dbg_reav!(if let Some(name) = thread::current().name() {
     format!("{}", name)
   } else {
-    format!("{}", get_thread_id())
+    format!("{}", thread_id())
   })
-}
-
-pub fn get_thread_id() -> String {
-  dbg_call!();
-  dbg_reav!(format!("{:?}", thread::current().id()))
 }
