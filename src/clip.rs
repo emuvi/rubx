@@ -4,7 +4,7 @@ pub fn parse() -> ArgMatches {
     Command::new("rubx")
     .version(clap::crate_version!())
     .about("Rubx (Rust Basic Toolbox) is a library for command programs that features a toolbox with a series of basic functionalities.")
-    .author("Éverton M. Vieira <everton.muvi@gmail.com>")
+    .author("Éverton M. Vieira <emuvi@outlook.com.br>")
     .arg(
       Arg::new("verbose")
         .short('v')
