@@ -9,3 +9,4 @@ mod tests;
 
 use std::error::Error;
 pub type RubxError = Box<dyn Error + Send + Sync>;
+pub type RubxResult<T> = Result<T, RubxError>;
