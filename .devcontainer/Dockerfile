@@ -1,11 +1,7 @@
 FROM rust:1.60
-
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && apt-get -y install --no-install-recommends <your-package-list-here>
-
-# [Optional] Uncomment if you want to install an additional version of node using nvm
-# ARG EXTRA_NODE_VERSION=10
-# RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
-
-# [Optional] Uncomment if you want to install more global node modules
-# RUN su node -c "npm install -g <your-package-list-here>"
+RUN su rustup component add rustfmt --toolchain 1.60.0-x86_64-unknown-linux-gnu
+RUN su rustup component add clippy --toolchain 1.60.0-x86_64-unknown-linux-gnu
+RUN su rustup component add rust-analysis --toolchain 1.60.0-x86_64-unknown-linux-gnu
+RUN su rustup component add rust-docs --toolchain 1.60.0-x86_64-unknown-linux-gnu
+RUN su rustup component add rust-src --toolchain 1.60.0-x86_64-unknown-linux-gnu
+RUN su rustup component add rls --toolchain 1.60.0-x86_64-unknown-linux-gnu

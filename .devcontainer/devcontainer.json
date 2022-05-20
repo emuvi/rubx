@@ -7,10 +7,20 @@
   // Set *default* container specific settings.json values on container create.
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": ["Swellaby.rust-pack", "usernamehw.errorlens"],
+  "settings": {
+    "files.eol": "\n",
+    "errorLens.enabled": true,
+    "errorLens.errorColor": "rgba(240,0,0,0.1)",
+    "errorLens.errorTextColor": "rgba(240,0,0,0.4)",
+    "errorLens.warningColor": "rgba(180,180,0,0.1)",
+    "errorLens.warningTextColor": "rgba(180,180,0,0.4)",
+    "errorLens.hintColor": "rgba(20,140,140,0.1)",
+    "errorLens.hintTextColor": "rgba(20,140,140,0.4)",
+    "errorLens.infoColor": "rgba(0,200,0,0.1)",
+    "errorLens.infoTextColor": "rgba(0,200,0,0.4)"
   }
-
-  // Add the IDs of extensions you want installed when the container is created.
-  // "extensions": [],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
