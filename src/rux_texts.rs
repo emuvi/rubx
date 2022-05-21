@@ -405,18 +405,6 @@ pub fn write(path: &str, contents: String) -> Result<(), RubxError> {
   Ok(write!(file, "{}", contents).map_err(|err| dbg_erro!(err, path))?)
 }
 
-pub fn append(path: &str, contents: String) -> Result<(), RubxError> {
-  dbg_call!(path, contents);
-  let mut file = std::fs::OpenOptions::new()
-    .create(true)
-    .write(true)
-    .truncate(false)
-    .append(true)
-    .open(path)
-    .map_err(|err| dbg_erro!(err, path))?;
-  Ok(writeln!(file, "{}", contents).map_err(|err| dbg_erro!(err, path))?)
-}
-
 pub fn write_lines(path: &str, lines: Vec<String>) -> Result<(), RubxError> {
   dbg_call!(path, lines);
   let mut file = std::fs::OpenOptions::new()
@@ -432,6 +420,42 @@ pub fn write_lines(path: &str, lines: Vec<String>) -> Result<(), RubxError> {
   Ok(())
 }
 
+pub fn write_inputs(path: &str) -> Result<(), RubxError> {
+  dbg_call!(path);
+  let mut file = std::fs::OpenOptions::new()
+    .create(true)
+    .write(true)
+    .truncate(true)
+    .append(false)
+    .open(path)
+    .map_err(|err| dbg_erro!(err, path))?;
+  let input = std::io::stdin();
+  let mut buffer = String::new();
+  loop {
+    let size_read = input
+      .read_line(&mut buffer)
+      .map_err(|err| dbg_erro!(err, path))?;
+    if size_read == 0 {
+      break;
+    }
+    write!(file, "{}", buffer).map_err(|err| dbg_erro!(err, path, buffer))?;
+    buffer.clear();
+  }
+  dbg_reav!(Ok(()));
+}
+
+pub fn append(path: &str, contents: String) -> Result<(), RubxError> {
+  dbg_call!(path, contents);
+  let mut file = std::fs::OpenOptions::new()
+    .create(true)
+    .write(true)
+    .truncate(false)
+    .append(true)
+    .open(path)
+    .map_err(|err| dbg_erro!(err, path))?;
+  Ok(writeln!(file, "{}", contents).map_err(|err| dbg_erro!(err, path))?)
+}
+
 pub fn append_lines(path: &str, lines: Vec<String>) -> Result<(), RubxError> {
   dbg_call!(path, lines);
   let mut file = std::fs::OpenOptions::new()
@@ -445,6 +469,30 @@ pub fn append_lines(path: &str, lines: Vec<String>) -> Result<(), RubxError> {
     writeln!(file, "{}", line).map_err(|err| dbg_erro!(err, path, line))?;
   }
   Ok(())
+}
+
+pub fn append_inputs(path: &str) -> Result<(), RubxError> {
+  dbg_call!(path);
+  let mut file = std::fs::OpenOptions::new()
+    .create(true)
+    .write(true)
+    .truncate(false)
+    .append(true)
+    .open(path)
+    .map_err(|err| dbg_erro!(err, path))?;
+  let input = std::io::stdin();
+  let mut buffer = String::new();
+  loop {
+    let size_read = input
+      .read_line(&mut buffer)
+      .map_err(|err| dbg_erro!(err, path))?;
+    if size_read == 0 {
+      break;
+    }
+    write!(file, "{}", buffer).map_err(|err| dbg_erro!(err, path, buffer))?;
+    buffer.clear();
+  }
+  dbg_reav!(Ok(()));
 }
 
 pub fn read_setup(path: &str) -> Result<HashMap<String, String>, RubxError> {

@@ -75,6 +75,24 @@ fn call_function(
         );
       }
     },
+    "texts" => match function {
+      "write_inputs" => {
+        let path = &args[start_at];
+        rubx::rux_texts::write_inputs(path).unwrap();
+        *update_on += 1;
+      }
+      "append_inputs" => {
+        let path = &args[start_at];
+        rubx::rux_texts::append_inputs(path).unwrap();
+        *update_on += 1;
+      }
+      _ => {
+        eprintln!(
+          "The function {} of module {} is not supported",
+          function, module
+        );
+      }
+    },
     _ => {
       eprintln!("The module {} is not supported", module);
     }
