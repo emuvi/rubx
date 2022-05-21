@@ -6,13 +6,15 @@ use std::fmt::Display;
 use std::fmt::Formatter;
 use std::fmt::Result;
 use std::fs::File;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Mutex;
 
+use crate::rux_texts;
 use crate::rux_times;
 use crate::RubxError;
+use crate::RubxResult;
 
 static VERBOSE: AtomicBool = AtomicBool::new(false);
 static ARCHIVE: AtomicBool = AtomicBool::new(false);
@@ -31,6 +33,44 @@ static ARCFILE: Lazy<Mutex<File>> = Lazy::new(|| {
 });
 static DBGTIME: AtomicBool = AtomicBool::new(false);
 static DBGSIZE: AtomicUsize = AtomicUsize::new(1);
+
+pub fn setup(from: &str) -> RubxResult<()> {
+  let setup = rux_texts::read_setup(from).expect("Could not read the debug setup file.");
+  for (key, value) in setup.iter() {
+    match key.as_str() {
+      "verbose" => set_verbose(rux_texts::is_truthy(&value)),
+      "archive" => set_archive(rux_texts::is_truthy(&value)),
+      "dbgtime" => set_dbg_time(rux_texts::is_truthy(&value)),
+      "dbgsize" => set_dbg_size(
+        value
+          .parse::<usize>()
+          .expect("Could not parse the debug size."),
+      ),
+      "debug-calls" => {
+        if rux_texts::is_truthy(&value) {
+          put_dbg_calls()
+        }
+      }
+      "debug-reavs" => {
+        if rux_texts::is_truthy(&value) {
+          put_dbg_reavs()
+        }
+      }
+      "debug-steps" => {
+        if rux_texts::is_truthy(&value) {
+          put_dbg_steps()
+        }
+      }
+      "debug-tells" => {
+        if rux_texts::is_truthy(&value) {
+          put_dbg_tells()
+        }
+      }
+      _ => (),
+    }
+  }
+  Ok(())
+}
 
 pub fn is_verbose() -> bool {
   VERBOSE.load(Ordering::Acquire)
@@ -62,16 +102,16 @@ pub fn put_archive() {
   set_archive(true);
 }
 
-pub fn is_dbg_times() -> bool {
+pub fn is_dbg_time() -> bool {
   DBGTIME.load(Ordering::Acquire)
 }
 
-pub fn set_dbg_times(time: bool) {
+pub fn set_dbg_time(time: bool) {
   DBGTIME.store(time, Ordering::Release);
 }
 
-pub fn put_dbg_times() {
-  set_dbg_times(true);
+pub fn put_dbg_time() {
+  set_dbg_time(true);
 }
 
 pub fn get_dbg_size() -> usize {
@@ -106,7 +146,7 @@ pub fn put_dbg_verbose_tells() {
 pub fn debug(message: impl AsRef<str>) {
   let thread_display = get_thread_display();
   if is_verbose() {
-    if is_dbg_times() {
+    if is_dbg_time() {
       println!(
         "{} - |{}| {}",
         Utc::now().format(rux_times::UNIQUE_REAL_FORMAT),
@@ -119,7 +159,7 @@ pub fn debug(message: impl AsRef<str>) {
   }
   if is_archive() {
     let mut file = ARCFILE.lock().unwrap();
-    if is_dbg_times() {
+    if is_dbg_time() {
       writeln!(
         file,
         "{} - |{}| {}",

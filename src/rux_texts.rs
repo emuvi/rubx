@@ -468,3 +468,22 @@ pub fn read_setup(path: &str) -> Result<HashMap<String, String>, RubxError> {
   }
   dbg_reav!(Ok(result));
 }
+
+pub fn is_truthy(value: &str) -> bool {
+  dbg_call!(value);
+  if value.is_empty() {
+    return false;
+  }
+  let value = value.to_lowercase();
+  if value == "true"
+    || value == "t"
+    || value == "yes"
+    || value == "y"
+    || value == "on"
+    || value == "1"
+  {
+    dbg_reav!(true);
+  } else {
+    dbg_reav!(false);
+  }
+}
