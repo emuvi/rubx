@@ -3,8 +3,11 @@ fn main() {
   let mut index = 0;
   while index < args.len() {
     let arg = &args[index];
-    if arg == "--help" || arg == "-h" {
-      help();
+    if arg == "--version" || arg == "-V" {
+      version();
+      return;
+    } else if arg == "--help" || arg == "-h" {
+      usage_help();
       return;
     } else if arg == "--call" || arg == "-c" {
       call(&args, index + 1, &mut index);
@@ -13,7 +16,11 @@ fn main() {
   }
 }
 
-fn help() {
+fn version() {
+  println!("Rubx version: {}", env!("CARGO_PKG_VERSION"));
+}
+
+fn usage_help() {
   println!("{}", "Help usage");
 }
 
