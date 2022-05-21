@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 use std::sync::{Arc, Mutex};
@@ -444,4 +445,26 @@ pub fn append_lines(path: &str, lines: Vec<String>) -> Result<(), RubxError> {
     writeln!(file, "{}", line).map_err(|err| dbg_erro!(err, path, line))?;
   }
   Ok(())
+}
+
+pub fn read_setup(path: &str) -> Result<HashMap<String, String>, RubxError> {
+  dbg_call!(path);
+  let file = File::open(path).map_err(|err| dbg_erro!(err, path))?;
+  let reader = BufReader::new(file);
+  let mut result = HashMap::new();
+  for line in reader.lines() {
+    let line = line.map_err(|err| dbg_erro!(err, path))?;
+    if line.starts_with("#") || line.is_empty() {
+      continue;
+    }
+    let equals_pos = line.find('=');
+    if let Some(equals_pos) = equals_pos {
+      let key = line[0..equals_pos].trim().to_string();
+      let value = line[equals_pos + 1..].trim().to_string();
+      result.insert(key, value);
+    } else {
+      result.insert(line.clone(), String::new());
+    }
+  }
+  dbg_reav!(Ok(result));
 }
