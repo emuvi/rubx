@@ -292,19 +292,6 @@ pub fn debug_step(file: &str, line: u32, func: &str, vals: String) {
   }
 }
 
-pub fn debug_ifis(file: &str, line: u32, func: &str, what: &str, ifis: String) {
-  if get_dbg_size() >= 3 {
-    debug_in(
-      "DBUG",
-      "IFIS",
-      file,
-      line,
-      func,
-      format!("if is {} = {}", what, ifis),
-    );
-  }
-}
-
 pub fn debug_lets(file: &str, line: u32, func: &str, what: &str, lets: String) {
   if get_dbg_size() >= 3 {
     debug_in(
@@ -327,6 +314,19 @@ pub fn debug_muts(file: &str, line: u32, func: &str, what: &str, muts: String) {
       line,
       func,
       format!("muts {} = {}", what, muts),
+    );
+  }
+}
+
+pub fn debug_ifis(file: &str, line: u32, func: &str, what: &str, ifis: String) {
+  if get_dbg_size() >= 4 {
+    debug_in(
+      "DBUG",
+      "IFIS",
+      file,
+      line,
+      func,
+      format!("if is {} = {}", what, ifis),
     );
   }
 }
