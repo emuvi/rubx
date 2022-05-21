@@ -60,6 +60,14 @@ fn call_function(
         println!("{}", rubx::rux_rands::chars(count));
         *update_on += 1;
       }
+      "lines" => {
+        let lines_count = args[start_at].parse::<usize>().unwrap();
+        let chars_count = args[start_at + 1].parse::<usize>().unwrap();
+        for line in rubx::rux_rands::lines(lines_count, chars_count) {
+          println!("{}", line);
+        }
+        *update_on += 2;
+      }
       _ => {
         eprintln!(
           "The function {} of module {} is not supported",
