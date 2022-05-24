@@ -456,7 +456,7 @@ pub fn append(path: &str, contents: String) -> Result<(), RubxError> {
   Ok(writeln!(file, "{}", contents).map_err(|err| dbg_erro!(err, path))?)
 }
 
-pub fn append_lines(path: &str, lines: Vec<String>) -> Result<(), RubxError> {
+pub fn append_lines(path: &str, lines: &[impl AsRef<str>]) -> Result<(), RubxError> {
   dbg_call!(path, lines);
   let mut file = std::fs::OpenOptions::new()
     .create(true)
@@ -466,7 +466,7 @@ pub fn append_lines(path: &str, lines: Vec<String>) -> Result<(), RubxError> {
     .open(path)
     .map_err(|err| dbg_erro!(err, path))?;
   for line in lines {
-    writeln!(file, "{}", line).map_err(|err| dbg_erro!(err, path, line))?;
+    writeln!(file, "{}", line.as_ref()).map_err(|err| dbg_erro!(err, path, line))?;
   }
   Ok(())
 }
