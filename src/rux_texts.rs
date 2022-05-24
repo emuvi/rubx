@@ -89,8 +89,7 @@ pub fn del(text: &str, start: usize, end: usize) -> String {
 pub fn del_rex(text: &str, regex: &str) -> RubxResult<String> {
   dbg_call!(text, regex);
   let regex = Regex::new(regex).map_err(|err| dbg_erro!(err))?;
-  let result = del_regex(text, regex);
-  dbg_reav!(Ok(result));
+  dbg_reav!(Ok(del_regex(text, regex)));
 }
 
 pub fn del_regex(text: &str, regex: Regex) -> String {
