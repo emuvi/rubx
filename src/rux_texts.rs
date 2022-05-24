@@ -104,6 +104,11 @@ pub fn is_equals(text: &str, with: &str) -> bool {
   dbg_reav!(text == with)
 }
 
+pub fn is_equally(text: &str, with: &str) -> bool {
+  dbg_call!(text, with);
+  dbg_reav!(text.to_lowercase() == with.to_lowercase())
+}
+
 pub fn is_likely(text: &str, with: &str) -> bool {
   dbg_call!(text, with);
   let mut side_a = text.chars();
