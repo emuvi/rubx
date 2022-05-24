@@ -498,6 +498,34 @@ pub fn append_inputs(path: &str) -> Result<(), RubxError> {
   dbg_reav!(Ok(()));
 }
 
+pub fn find_bigger_line(on: &[impl AsRef<str> + std::fmt::Debug]) -> Option<&str> {
+  dbg_call!(on);
+  if on.is_empty() {
+    dbg_reav!(None);
+  }
+  let mut bigger = on[0].as_ref();
+  for line in on {
+    if line.as_ref().len() > bigger.len() {
+      bigger = line.as_ref();
+    }
+  }
+  dbg_reav!(Some(bigger));
+}
+
+pub fn find_smaller_line(on: &[impl AsRef<str> + std::fmt::Debug]) -> Option<&str> {
+  dbg_call!(on);
+  if on.is_empty() {
+    dbg_reav!(None);
+  }
+  let mut smallest = on[0].as_ref();
+  for line in on {
+    if line.as_ref().len() < smallest.len() {
+      smallest = line.as_ref();
+    }
+  }
+  dbg_reav!(Some(smallest));
+}
+
 pub fn read_setup(path: &str) -> Result<HashMap<String, String>, RubxError> {
   dbg_call!(path);
   let file = File::open(path).map_err(|err| dbg_erro!(err, path))?;
