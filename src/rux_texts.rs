@@ -1,3 +1,5 @@
+use regex::Regex;
+
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
@@ -6,7 +8,7 @@ use std::thread::JoinHandle;
 
 use crate::rux_debug::dbg_erro;
 use crate::rux_debug::{dbg_call, dbg_reav, dbg_tell};
-use crate::RubxError;
+use crate::{RubxError, RubxResult};
 
 pub static LINE_SPACE_CHARS: &[char] = &[' ', '\t'];
 pub static LINE_BREAK_CHARS: &[char] = &['\n', '\r'];
@@ -82,6 +84,18 @@ pub fn del(text: &str, start: usize, end: usize) -> String {
     }
   }
   result
+}
+
+pub fn del_rex(text: &str, regex: &str) -> RubxResult<String> {
+  dbg_call!(text, regex);
+  let regex = Regex::new(regex).map_err(|err| dbg_erro!(err))?;
+  let result = del_regex(text, regex);
+  dbg_reav!(Ok(result));
+}
+
+pub fn del_regex(text: &str, regex: Regex) -> String {
+  dbg_call!(text, regex);
+  dbg_reav!(regex.replace_all(text, "").to_string());
 }
 
 pub fn trim(text: &str) -> String {
