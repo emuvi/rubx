@@ -254,11 +254,11 @@ pub fn path_ext_is(path: &str, ext: &str) -> bool {
   path_ext(path).to_lowercase() == ext.to_lowercase()
 }
 
-pub fn path_ext_is_on(path: &str, exts: Vec<String>) -> bool {
-  dbg_step!(path, exts);
+pub fn path_ext_is_on(path: &str, exts: &[impl AsRef<str> + std::fmt::Debug]) -> bool {
+  dbg_call!(path, exts);
   let ext = path_ext(path).to_lowercase();
   for case in exts {
-    if ext == case.to_lowercase() {
+    if ext == case.as_ref() {
       return true;
     }
   }
@@ -357,7 +357,7 @@ pub fn path_join(path: &str, child: &str) -> Result<String, RubxError> {
     .into_iter()
     .map(String::from)
     .collect::<Vec<String>>();
-  let inital_size = base_parts.len();
+  let initial_size = base_parts.len();
   let has_more = !is_absolute(path);
   let mut take_more = false;
   let child_parts = path_parts(child);
@@ -375,7 +375,7 @@ pub fn path_join(path: &str, child: &str) -> Result<String, RubxError> {
         if !take_more && has_more {
           let abs_path = path_absolute(path).map_err(|err| dbg_erro!(err))?;
           let abs_parts = path_parts(&abs_path);
-          let dif_parts = abs_parts.len() - inital_size;
+          let dif_parts = abs_parts.len() - initial_size;
           for new_index in 0..dif_parts {
             base_parts.insert(new_index, abs_parts[new_index].into());
           }
