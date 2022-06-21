@@ -1,7 +1,7 @@
 [package]
 name = "rubx"
 description = "Rubx (Rust Basic Toolbox) is a library for command programs that features a toolbox with a series of basic functionalities."
-repository = "https://github.com/emuvi/rubx/"
+repository = "https://github.com/emuvi/rubx"
 authors = ["Éverton M. Vieira"]
 license = "LGPL-3.0-only"
 version = "0.1.1"
