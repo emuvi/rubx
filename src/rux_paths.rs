@@ -1,8 +1,8 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crate::rux_debug::{dbg_call, dbg_ifis, dbg_lets, dbg_muts, dbg_reav};
 use crate::rux_debug::{dbg_erro, dbg_step, dbg_tell};
-use crate::RubxError;
+use crate::{RubxError, RubxResult};
 
 pub fn has(path: &str) -> bool {
   dbg_call!(path);
@@ -625,4 +625,16 @@ pub fn path_env_dirs() -> Result<Vec<String>, RubxError> {
     results.push(path);
   }
   dbg_reav!(Ok(results))
+}
+
+pub fn traverse<F: FnMut(&PathBuf)>(path: &PathBuf, act: &mut F) -> RubxResult<()> {
+  if path.is_dir() {
+    for inside in std::fs::read_dir(&path)? {
+      let inside = inside?;
+      let inside = inside.path();
+      traverse(&inside, act)?;
+    }
+  }
+  act(&path);
+  Ok(())
 }
